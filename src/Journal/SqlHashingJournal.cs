@@ -33,9 +33,6 @@ public class SqlHashingJournal : HashingTableJournal
                     [Applied] datetime not null
                 )";
 
-
-	//protected override string GetDeleteScriptSql() => $"DELETE FROM {FqSchemaTableName} WHERE [ScriptName] = @scriptName";
-
 	/// <inheritdoc/>
 	protected override string GetInsertJournalEntrySql(string scriptName, string applied, string contentHash) => $@"INSERT INTO {FqSchemaTableName} ([ScriptName], [ContentHash], [Applied]) 
                       VALUES ({@scriptName}, {@contentHash}, {@applied})";

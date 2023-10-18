@@ -63,23 +63,8 @@ public abstract class HashingTableJournal : TableJournal
 	public override void StoreExecutedScript(SqlScript script, Func<IDbCommand> dbCommandFactory)
 	{
 		EnsureTableExistsAndIsLatestVersion(dbCommandFactory);
-		using (var command = GetInsertScriptCommand(dbCommandFactory, script))
-		{
-			command.ExecuteNonQuery();
-		}
-
-		//var name = HashedSqlScript.FromScript(script);
-
-		//db.Execute(GetDeleteScriptSql(), new { scriptName = name.PlainName });
-
-		//db.Execute(GetInsertScriptSql(),
-		//	new
-		//	{
-		//		scriptName = name.PlainName,
-		//		contentHash = name.ContentsHash
-		//	});
-
-		//base.StoreExecutedScript(script, dbCommandFactory);
+		using var command = GetInsertScriptCommand(dbCommandFactory, script);
+		command.ExecuteNonQuery();
 	}
 
 
