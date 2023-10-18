@@ -20,7 +20,7 @@ public class SqlHashingJournal : HashingTableJournal
 	/// <example>
 	/// var journal = new SqlHashingJournal("Server=server;Database=database;Trusted_Connection=True", "dbo", "MyVersionTable");
 	/// </example>
-	public SqlHashingJournal(Func<IConnectionManager> connectionManager, Func<IUpgradeLog> logger, string schema, string table)
+	public SqlHashingJournal(Func<IConnectionManager> connectionManager, Func<IUpgradeLog> logger, string? schema, string? table)
 		: base(connectionManager, logger, new SqlServerObjectParser(), schema, table)
 	{
 	}

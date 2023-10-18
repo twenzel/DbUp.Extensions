@@ -21,11 +21,24 @@ public static class BuilderExtensions
 	/// <param name="builder">Builder.</param>
 	/// <param name="schema">Schema name.</param>
 	/// <param name="table">Table name.</param>
-	public static UpgradeEngineBuilder JournalToSqlWithHashing(this UpgradeEngineBuilder builder, string schema, string table)
+	public static UpgradeEngineBuilder JournalToSqlWithHashing(this UpgradeEngineBuilder builder, string? schema = null, string? table = null)
 	{
 		builder.Configure(configuration =>
 		{
 			configuration.Journal = new SqlHashingJournal(() => configuration.ConnectionManager, () => configuration.Log, schema, table);
+		});
+		return builder.WithHashing();
+	}
+
+	/// <summary>
+	/// Configures hashing script content.
+	/// </summary>
+	/// <returns>The to sql with hashing.</returns>
+	/// <param name="builder">Builder.</param>
+	public static UpgradeEngineBuilder WithHashing(this UpgradeEngineBuilder builder)
+	{
+		builder.Configure(configuration =>
+		{
 			configuration.ScriptFilter = new HashedSqlScriptFilter();
 		});
 		return builder;

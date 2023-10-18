@@ -17,8 +17,8 @@ public abstract class HashingTableJournal : TableJournal
 		Func<IConnectionManager> connectionManager,
 		Func<IUpgradeLog> logger,
 		ISqlObjectParser sqlObjectParser,
-		string schema,
-		string table) : base(connectionManager, logger, sqlObjectParser, schema, table)
+		string? schema,
+		string? table) : base(connectionManager, logger, sqlObjectParser, schema, table)
 	{
 
 	}
