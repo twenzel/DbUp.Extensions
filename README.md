@@ -2,7 +2,7 @@
 
 ![Build](https://github.com/twenzel/DbUp.Extensions/actions/workflows/build.yml/badge.svg?branch=main)
 [![NuGet Version](http://img.shields.io/nuget/v/DbUp.Extensions.svg?style=flat)](https://www.nuget.org/packages/DbUp.Extensions/)
-[![License](https://img.shields.io/badge/license-APACHE-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=twenzel_DbUp.Extensions&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=twenzel_DbUp.Extensions)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=twenzel_DbUp.Extensions&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=twenzel_DbUp.Extensions)
