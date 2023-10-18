@@ -1,6 +1,6 @@
 # DbUp.Extensions
 
-[![Build](https://github.com/twenzel/DbUp.Extensions/actions/workflows/build.yml/badge.svg?branch=main)
+![Build](https://github.com/twenzel/DbUp.Extensions/actions/workflows/build.yml/badge.svg?branch=main)
 [![NuGet Version](http://img.shields.io/nuget/v/DbUp.Extensions.svg?style=flat)](https://www.nuget.org/packages/DbUp.Extensions/)
 [![License](https://img.shields.io/badge/license-APACHE-blue.svg)](LICENSE)
 
