@@ -1,6 +1,6 @@
 # DbUp.Extensions
 
-Extensions for DbUp
+Extensions for [DbUp](https://github.com/DbUp/DbUp).
 
 ## Usage
 
