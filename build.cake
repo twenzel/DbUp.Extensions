@@ -11,13 +11,13 @@ var nugetApiKey = Argument("nugetApiKey", EnvironmentVariable("NUGET_API_KEY") ?
 //////////////////////////////////////////////////////////////////////
 //    Build Variables
 /////////////////////////////////////////////////////////////////////
-var solution = "./NServiceBus.Persistence.Sqlite.sln";
-var project = "./src/NServiceBus.Persistence.Sqlite/NServiceBus.Persistence.Sqlite.csproj";
+var solution = "./DbUp.Extensions.sln";
+var project = "./src/DbUp.Extensions.csproj";
 var outputDir = MakeAbsolute(Directory("./buildArtifacts/"));
 var outputDirNuget = outputDir.Combine("NuGet");
-var sonarProjectKey = "CHG-MERIDIAN_NServiceBus.Persistence.Sqlite";
+var sonarProjectKey = "twenzel_DbUp.Extensions";
 var sonarUrl = "https://sonarcloud.io";
-var sonarOrganization = "chg-meridian";
+var sonarOrganization = "twenzel";
 
 var outputDirTemp = outputDir.Combine("Temp");
 var outputDirTests = outputDirTemp.Combine("Tests");
