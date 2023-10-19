@@ -45,10 +45,7 @@ internal static class DatabaseExtensions
 				var ctor = typeof(T).GetConstructor(
 					Enumerable.Range(0, reader.FieldCount)
 							  .Select(reader.GetFieldType)
-							  .ToArray());
-
-				if (ctor == null)
-					throw new InvalidOperationException("No suitable constructor found");
+							  .ToArray()) ?? throw new InvalidOperationException("No suitable constructor found");
 
 				while (reader.Read())
 				{

@@ -23,8 +23,8 @@ internal class HashedJournalTests
 
 		deployer.PerformUpgrade().Successful.Should().BeTrue();
 
-		store.GetExecutedScriptNames().Should().HaveCount(2);
-		store.GetHashedScripts().Should().HaveCount(2);
-		store.GetHashedScripts().Select(s => s.PlainName).Should().ContainInOrder("script1", "script2");
+		var schemaVersions = store.GetSchemaVersions();
+		schemaVersions.Should().HaveCount(2);
+		schemaVersions.Select(s => s.ScriptName).Should().ContainInOrder("script1", "script2");
 	}
 }
