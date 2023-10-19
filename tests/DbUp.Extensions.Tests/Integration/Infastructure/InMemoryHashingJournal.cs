@@ -41,7 +41,7 @@ public class InMemoryHashingJournal : HashingTableJournal, IJournal
 
 	string[] IJournal.GetExecutedScripts()
 	{
-		return _store.GetExecutedScriptNames();
+		return _store.GetSchemaVersions().Select(s => new HashedSqlScript(s.ScriptName ?? string.Empty, s.ContentHash ?? string.Empty).ToString()).ToArray();
 	}
 
 	protected override bool DoesTableExist(Func<IDbCommand> dbCommandFactory) => true;

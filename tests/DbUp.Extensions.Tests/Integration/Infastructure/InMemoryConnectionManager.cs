@@ -6,7 +6,7 @@ using DbUp.Engine.Output;
 using DbUp.Engine.Transactions;
 
 namespace DbUp.Extensions.Tests.Integration.Infastructure;
-internal class InMemoryConnectionManager : IConnectionManager
+internal partial class InMemoryConnectionManager : IConnectionManager
 {
 	private bool _operationStarted;
 
@@ -43,7 +43,7 @@ internal class InMemoryConnectionManager : IConnectionManager
 	public IEnumerable<string> SplitScriptIntoCommands(string scriptContents)
 	{
 		var scriptStatements =
-			   Regex.Split(scriptContents, "^\\s*;\\s*$", RegexOptions.IgnoreCase | RegexOptions.Multiline)
+			   SplitCommands().Split(scriptContents)
 				   .Select(x => x.Trim())
 				   .Where(x => x.Length > 0)
 				   .ToArray();
@@ -57,7 +57,7 @@ internal class InMemoryConnectionManager : IConnectionManager
 		return true;
 	}
 
-	private IDbCommand CreateCommand() => new InternalDbCommand();
+	private static IDbCommand CreateCommand() => new InternalDbCommand();
 
 	private sealed class NullDisposable : IDisposable
 	{
@@ -103,17 +103,9 @@ internal class InMemoryConnectionManager : IConnectionManager
 			return 0;
 		}
 
-		public IDataReader ExecuteReader()
-		{
-			// do nothing
-			return null;
-		}
+		public IDataReader ExecuteReader() => throw new NotSupportedException();
 
-		public IDataReader ExecuteReader(CommandBehavior behavior)
-		{
-			// do nothing
-			return null;
-		}
+		public IDataReader ExecuteReader(CommandBehavior behavior) => throw new NotSupportedException();
 
 		public object? ExecuteScalar()
 		{
@@ -156,13 +148,21 @@ internal class InMemoryConnectionManager : IConnectionManager
 		public int IndexOf(string parameterName)
 		{
 			var parameter = Find(p => p.ParameterName == parameterName);
+
+			if (parameter == null)
+				return -1;
+
 			return IndexOf(parameter);
 		}
 
 		public void RemoveAt(string parameterName)
 		{
 			var parameter = Find(p => p.ParameterName == parameterName);
-			Remove(parameter);
+			if (parameter != null)
+				Remove(parameter);
 		}
 	}
+
+	[GeneratedRegex("^\\s*;\\s*$", RegexOptions.IgnoreCase | RegexOptions.Multiline, "de-DE")]
+	private static partial Regex SplitCommands();
 }

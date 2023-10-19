@@ -63,6 +63,20 @@ public sealed class HashedSqlScript
 	}
 
 	/// <summary>
+	/// Attempts to split the supplied string into name and hash parts.
+	/// The parse will only succeed if the string contains a #.
+	/// </summary>
+	/// <returns><c>HashedSqlScript</c>, if parse was successful, <c>null</c> otherwise.</returns>
+	/// <param name="combinedName">Combined name or other string.</param>
+	public static HashedSqlScript? Parse(string combinedName)
+	{
+		if (TryParse(combinedName, out var result))
+			return result;
+
+		return null;
+	}
+
+	/// <summary>
 	/// Returns the SHA256 hash of the supplied content
 	/// </summary>
 	/// <returns>The hash.</returns>
