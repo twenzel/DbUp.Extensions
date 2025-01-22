@@ -30,8 +30,8 @@ internal class InMemoryScriptExecutor : ScriptExecutor
 		}
 		catch (Exception exception)
 		{
-			Log().WriteInformation("Exception has occurred in script: '{0}'", script.Name);
-			Log().WriteError(exception.ToString());
+			Log().LogInformation("Exception has occurred in script: '{0}'", script.Name);
+			Log().LogError(exception.ToString());
 			throw;
 		}
 	}

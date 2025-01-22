@@ -1,5 +1,5 @@
 ﻿using DbUp.Engine;
-using FluentAssertions;
+using Shouldly;
 
 namespace DbUp.Extensions.Tests.Integration;
 
@@ -21,11 +21,13 @@ internal class HashedJournalTests
                         "))
 				.Build();
 
-		deployer.PerformUpgrade().Successful.Should().BeTrue();
+		deployer.PerformUpgrade().Successful.ShouldBeTrue();
 
 		var schemaVersions = store.GetSchemaVersions();
-		schemaVersions.Should().HaveCount(2);
-		schemaVersions.Select(s => s.ScriptName).Should().ContainInOrder("script1", "script2");
+		schemaVersions.Count.ShouldBe(2);
+
+		var scripts = schemaVersions.Select(s => s.ScriptName).ToList();
+		scripts.ShouldBe(["script1", "script2"]);
 	}
 
 	[Test]
@@ -44,8 +46,8 @@ internal class HashedJournalTests
                         "))
 				.Build();
 
-		deployer.PerformUpgrade().Successful.Should().BeTrue();
-		store.GetExecutedScripts().Should().HaveCount(2);
+		deployer.PerformUpgrade().Successful.ShouldBeTrue();
+		store.GetExecutedScripts().Count.ShouldBe(2);
 
 		store.ClearExecutedScripts();
 
@@ -61,10 +63,10 @@ internal class HashedJournalTests
                         "))
 				.Build();
 
-		deployer.PerformUpgrade().Successful.Should().BeTrue();
+		deployer.PerformUpgrade().Successful.ShouldBeTrue();
 
 		// no scripts should be executed
-		store.GetExecutedScripts().Should().HaveCount(0);
+		store.GetExecutedScripts().Count.ShouldBe(0);
 	}
 
 	[Test]
@@ -83,8 +85,8 @@ internal class HashedJournalTests
                         "))
 				.Build();
 
-		deployer.PerformUpgrade().Successful.Should().BeTrue();
-		store.GetExecutedScripts().Should().HaveCount(2);
+		deployer.PerformUpgrade().Successful.ShouldBeTrue();
+		store.GetExecutedScripts().Count.ShouldBe(2);
 
 		store.ClearExecutedScripts();
 
@@ -100,9 +102,9 @@ internal class HashedJournalTests
                         "))
 				.Build();
 
-		deployer.PerformUpgrade().Successful.Should().BeFalse();
+		deployer.PerformUpgrade().Successful.ShouldBeFalse();
 
 		// no scripts should be executed
-		store.GetExecutedScripts().Should().HaveCount(0);
+		store.GetExecutedScripts().Count.ShouldBe(0);
 	}
 }

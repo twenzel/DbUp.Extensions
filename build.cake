@@ -1,8 +1,8 @@
-#tool "dotnet:?package=GitVersion.Tool&version=5.12.0"
-#tool "nuget:?package=NuGet.CommandLine&version=6.7.0"
-#tool "nuget:?package=dotnet-sonarscanner&version=5.14.0"
+#tool "dotnet:?package=GitVersion.Tool&version=6.1.0"
+#tool "nuget:?package=NuGet.CommandLine&version=6.12.2"
+#tool "nuget:?package=dotnet-sonarscanner&version=9.0.2"
 
-#addin "nuget:?package=Cake.Sonar&version=1.1.32"
+#addin "nuget:?package=Cake.Sonar&version=1.1.33"
 
 var target = Argument("target", "Default");
 var sonarLoginToken = Argument("sonarLogin", EnvironmentVariable("SONAR_LOGIN") ?? "");
@@ -41,125 +41,138 @@ var isReleaseCreation = string.Equals(gitHubEvent, "release");
 
 Setup(context =>
 {
-	Information($"Local build: {isLocalBuild}");
-	Information($"Main branch: {isMainBranch}");
-	Information($"Pull request: {isPullRequest}");	
-	Information($"Run sonar: {runSonar}");
-	Information($"ref: {BuildSystem.GitHubActions.Environment.Workflow.Ref}");
-	Information($"Is release creation: {isReleaseCreation}");
+    Information($"Local build: {isLocalBuild}");
+    Information($"Main branch: {isMainBranch}");
+    Information($"Pull request: {isPullRequest}");
+    Information($"Run sonar: {runSonar}");
+    Information($"ref: {BuildSystem.GitHubActions.Environment.Workflow.Ref}");
+    Information($"Is release creation: {isReleaseCreation}");
 });
 
 Task("Clean")
-	.Description("Removes the output directory")
-	.Does(() => {
-	  
-	EnsureDirectoryDoesNotExist(outputDir, new DeleteDirectorySettings {
-		Recursive = true,
-		Force = true
-	});
-	CreateDirectory(outputDir);	
-});
+    .Description("Removes the output directory")
+    .Does(() =>
+    {
+
+        EnsureDirectoryDoesNotExist(outputDir, new DeleteDirectorySettings
+        {
+            Recursive = true,
+            Force = true
+        });
+        CreateDirectory(outputDir);
+    });
 
 GitVersion versionInfo = null;
 Task("Version")
-	.Description("Retrieves the current version from the git repository")
-	.Does(() => {
-		
-		versionInfo = GitVersion(new GitVersionSettings {
-			UpdateAssemblyInfo = false
-		});
-		
-		Information("Version: "+ versionInfo.FullSemVer);
-	});
+    .Description("Retrieves the current version from the git repository")
+    .Does(() =>
+    {
+
+        versionInfo = GitVersion(new GitVersionSettings
+        {
+            UpdateAssemblyInfo = false
+        });
+
+        Information("Version: " + versionInfo.FullSemVer);
+    });
 
 Task("Build")
-	.IsDependentOn("Clean")
-	.IsDependentOn("Version")
-	.Does(() => {
-		
-		var msBuildSettings = new DotNetMSBuildSettings()
-		{
-			Version =  versionInfo.AssemblySemVer,
-			InformationalVersion = versionInfo.InformationalVersion,
-			PackageVersion = versionInfo.NuGetVersionV2
-		}.WithProperty("PackageOutputPath", outputDirNuget.FullPath);	
+    .IsDependentOn("Clean")
+    .IsDependentOn("Version")
+    .Does(() =>
+    {
 
-		var settings = new DotNetBuildSettings {
-			Configuration = "Release",					
-			MSBuildSettings = msBuildSettings
-		};	
+        var msBuildSettings = new DotNetMSBuildSettings()
+        {
+            Version = versionInfo.AssemblySemVer,
+            InformationalVersion = versionInfo.InformationalVersion,
+            PackageVersion = versionInfo.Semver
+        }.WithProperty("PackageOutputPath", outputDirNuget.FullPath);
 
-		DotNetBuild(solution, settings);			
-	});
+        var settings = new DotNetBuildSettings
+        {
+            Configuration = "Release",
+            MSBuildSettings = msBuildSettings
+        };
+
+        DotNetBuild(solution, settings);
+    });
 
 Task("Test")
-	.IsDependentOn("Build")
-	.Does(() =>
-	{
+    .IsDependentOn("Build")
+    .Does(() =>
+    {
 
-		var settings = new DotNetTestSettings {
-			Configuration = "Release",
-			Loggers = new[]{"trx;"},
-			ResultsDirectory = outputDirTests,
-			Collectors = new[] {"XPlat Code Coverage"},	
-			ArgumentCustomization = a => a.Append("-- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover"),
-			NoBuild = true
-		};		
-				
-		DotNetTest(solution, settings);		
-	});
-	
+        var settings = new DotNetTestSettings
+        {
+            Configuration = "Release",
+            Loggers = new[] { "trx;" },
+            ResultsDirectory = outputDirTests,
+            Collectors = new[] { "XPlat Code Coverage" },
+            ArgumentCustomization = a => a.Append("-- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover"),
+            NoBuild = true
+        };
+
+        DotNetTest(solution, settings);
+    });
+
 Task("SonarBegin")
-	.WithCriteria(runSonar)
-	.Does(() => {
-		SonarBegin(new SonarBeginSettings {
-			Key = sonarProjectKey,
-			Url = sonarUrl,
-			Organization = sonarOrganization,
-			Token = sonarLoginToken,
-			UseCoreClr = true,
-			VsTestReportsPath = testResultsPath.ToString(),
-			OpenCoverReportsPath = codeCoverageResultFilePath.ToString()
-		});
-	});
+    .WithCriteria(runSonar)
+    .Does(() =>
+    {
+        SonarBegin(new SonarBeginSettings
+        {
+            Key = sonarProjectKey,
+            Url = sonarUrl,
+            Organization = sonarOrganization,
+            Token = sonarLoginToken,
+            UseCoreClr = true,
+            VsTestReportsPath = testResultsPath.ToString(),
+            OpenCoverReportsPath = codeCoverageResultFilePath.ToString()
+        });
+    });
 
 Task("SonarEnd")
-	.WithCriteria(runSonar)
-	.Does(() => {
-		SonarEnd(new SonarEndSettings {
-			Token = sonarLoginToken
-		});
-	});
-	
+    .WithCriteria(runSonar)
+    .Does(() =>
+    {
+        SonarEnd(new SonarEndSettings
+        {
+            Token = sonarLoginToken
+        });
+    });
+
 Task("Publish")
-	.WithCriteria(isReleaseCreation)
-	.IsDependentOn("Test")	
-	.IsDependentOn("Version")
-	.Description("Pushes the created NuGet packages to nuget.org")  
-	.Does(() => {		
-		Information($"Upload packages from {outputDirNuget.FullPath}");
+    .WithCriteria(isReleaseCreation)
+    .IsDependentOn("Test")
+    .IsDependentOn("Version")
+    .Description("Pushes the created NuGet packages to nuget.org")
+    .Does(() =>
+    {
+        Information($"Upload packages from {outputDirNuget.FullPath}");
 
-		// Get the paths to the packages ordered by the file names in order to get the nupkg first.
-		var packages = GetFiles(outputDirNuget.CombineWithFilePath("*.*nupkg").ToString()).OrderBy(x => x.FullPath).ToArray();
+        // Get the paths to the packages ordered by the file names in order to get the nupkg first.
+        var packages = GetFiles(outputDirNuget.CombineWithFilePath("*.*nupkg").ToString()).OrderBy(x => x.FullPath).ToArray();
 
-		if (packages.Length == 0)
-		{
-			Error("No packages found to upload");
-			return;
-		}
+        if (packages.Length == 0)
+        {
+            Error("No packages found to upload");
+            return;
+        }
 
-		// Push the package and symbols
-		NuGetPush(packages, new NuGetPushSettings {
-			Source = nugetPublishFeed,
-			ApiKey = nugetApiKey,
-			SkipDuplicate = true
-		});	
-	});
-	
+        // Push the package and symbols
+        NuGetPush(packages, new NuGetPushSettings
+        {
+            Source = nugetPublishFeed,
+            ApiKey = nugetApiKey,
+            SkipDuplicate = true
+        });
+    });
+
 Task("Default")
-	.IsDependentOn("SonarBegin")
-	.IsDependentOn("Test")	
-	.IsDependentOn("SonarEnd")
-	.IsDependentOn("Publish");	
+    .IsDependentOn("SonarBegin")
+    .IsDependentOn("Test")
+    .IsDependentOn("SonarEnd")
+    .IsDependentOn("Publish");
 
 RunTarget(target);

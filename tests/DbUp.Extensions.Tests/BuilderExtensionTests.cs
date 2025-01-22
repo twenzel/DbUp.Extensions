@@ -1,6 +1,6 @@
 ﻿using DbUp.Extensions.Journal;
 using DbUp.Extensions.Tests.Integration;
-using FluentAssertions;
+using Shouldly;
 
 namespace DbUp.Extensions.Tests;
 
@@ -17,9 +17,9 @@ public class BuilderExtensionTests
 				.WithScript("testScript", "content");
 
 			var config = builder.BuildConfiguration();
-			config.Journal.Should().BeOfType<SqlHashingJournal>();
-			config.ScriptFilter.Should().NotBeNull();
-			config.ScriptFilter.GetType().Name.Should().Be("HashedSqlScriptFilter");
+			config.Journal.ShouldBeOfType<SqlHashingJournal>();
+			config.ScriptFilter.ShouldNotBeNull();
+			config.ScriptFilter.GetType().Name.ShouldBe("HashedSqlScriptFilter");
 		}
 	}
 }

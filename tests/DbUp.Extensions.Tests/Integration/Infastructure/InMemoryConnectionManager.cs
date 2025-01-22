@@ -12,7 +12,7 @@ internal partial class InMemoryConnectionManager : IConnectionManager
 
 	public TransactionMode TransactionMode { get; set; }
 	public bool IsScriptOutputLogged { get; set; }
-
+	public int? ExecutionTimeoutSeconds { get; set; }
 
 	public InMemoryConnectionManager()
 	{
