@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbUp.Extensions.Tests", "te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApp", "samples\SampleApp\SampleApp.csproj", "{FE3546A5-042D-47AF-A7C7-E08A7BB1D4C9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWithLiquibase", "samples\SampleWithLiquibase\SampleWithLiquibase.csproj", "{D515A6F2-D463-4AF2-B286-6B21EAE9702A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{FE3546A5-042D-47AF-A7C7-E08A7BB1D4C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE3546A5-042D-47AF-A7C7-E08A7BB1D4C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE3546A5-042D-47AF-A7C7-E08A7BB1D4C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D515A6F2-D463-4AF2-B286-6B21EAE9702A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D515A6F2-D463-4AF2-B286-6B21EAE9702A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D515A6F2-D463-4AF2-B286-6B21EAE9702A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D515A6F2-D463-4AF2-B286-6B21EAE9702A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

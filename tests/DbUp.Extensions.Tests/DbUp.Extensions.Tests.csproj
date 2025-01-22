@@ -28,4 +28,10 @@
     <ProjectReference Include="..\..\src\DbUp.Extensions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="dbFiles\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
