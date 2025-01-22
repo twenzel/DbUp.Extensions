@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="UTF-8"?> 
+<databaseChangeLog 
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd"> 
+
+	<include file="v1.0/Initial/InitialChangeLog.xml" />
+	<INCLUDE file="v1.0/Second/changelog.xml" />
+	<changeSet author="test" id="001-fix">
+		<sql>
+			ALTER TABLE dbo.TUTAddress ADD TADStatus int NOT NULL CONSTRAINT DF_TUTAddress_TADStatus DEFAULT 0;
+ALTER TABLE dbo.TUTAddress DROP CONSTRAINT DF_TUTAddress_TADStatus;
+
+DECLARE @v sql_variant 
+SET @v = N'Address status'
+EXECUTE sp_addextendedproperty N'MS_Description', @v, N'SCHEMA', N'dbo', N'TABLE', N'TUTAddress', N'COLUMN', N'TADStatus';
+		</sql>
+	</changeSet>
+	<include file="v2.0/changelog.xml" />
+	
+</databaseChangeLog> 

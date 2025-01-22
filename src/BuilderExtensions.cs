@@ -7,7 +7,7 @@ using DbUp.Support;
 
 namespace DbUp;
 
-public static class BuilderExtensions
+public static partial class BuilderExtensions
 {
 	/// <summary>
 	/// Configures hashing script content and saving them to the journal table.
