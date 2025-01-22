@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using DbUp.Engine;
 using DbUp.Engine.Output;
@@ -57,11 +58,11 @@ internal partial class InMemoryConnectionManager : IConnectionManager
 		return true;
 	}
 
-	private static IDbCommand CreateCommand() => new InternalDbCommand();
+	private static InternalDbCommand CreateCommand() => new();
 
 	private sealed class NullDisposable : IDisposable
 	{
-		public static NullDisposable Instance => new NullDisposable();
+		public static NullDisposable Instance => new();
 
 		public void Dispose()
 		{
@@ -71,7 +72,8 @@ internal partial class InMemoryConnectionManager : IConnectionManager
 
 	private sealed class InternalDbCommand : IDbCommand
 	{
-		public string CommandText { get; set; }
+		[AllowNull]
+		public string CommandText { get; set; } = string.Empty;
 		public int CommandTimeout { get; set; }
 		public CommandType CommandType { get; set; }
 		public IDbConnection? Connection { get; set; }
@@ -124,9 +126,12 @@ internal partial class InMemoryConnectionManager : IConnectionManager
 		public override DbType DbType { get; set; }
 		public override ParameterDirection Direction { get; set; }
 		public override bool IsNullable { get; set; }
-		public override string ParameterName { get; set; }
+
+		[AllowNull]
+		public override string ParameterName { get; set; } = string.Empty;
 		public override int Size { get; set; }
-		public override string SourceColumn { get; set; }
+		[AllowNull]
+		public override string SourceColumn { get; set; } = string.Empty;
 		public override bool SourceColumnNullMapping { get; set; }
 		public override object? Value { get; set; }
 
@@ -138,7 +143,8 @@ internal partial class InMemoryConnectionManager : IConnectionManager
 
 	private sealed class DataParameterCollection : List<DataParameter>, IDataParameterCollection
 	{
-		public object this[string parameterName] { get => Find(p => p.ParameterName == parameterName); set => throw new NotImplementedException(); }
+
+		public object this[string parameterName] { get => Find(p => p.ParameterName == parameterName) ?? throw new KeyNotFoundException(parameterName); set => throw new NotImplementedException(); }
 
 		public bool Contains(string parameterName)
 		{
