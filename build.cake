@@ -86,7 +86,7 @@ Task("Build")
         {
             Version = versionInfo.AssemblySemVer,
             InformationalVersion = versionInfo.InformationalVersion,
-            PackageVersion = versionInfo.NuGetVersionV2
+            PackageVersion = versionInfo.Semver
         }.WithProperty("PackageOutputPath", outputDirNuget.FullPath);
 
         var settings = new DotNetBuildSettings
