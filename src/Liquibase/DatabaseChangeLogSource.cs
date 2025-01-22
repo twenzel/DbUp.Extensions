@@ -15,7 +15,11 @@ internal static class DatabaseChangeLogSource
 		var doc = new XmlDocument();
 		doc.Load(filePath);
 
-		var changelogFilePath = Path.GetDirectoryName(filePath);
+		var changelogFilePath = Path.GetDirectoryName(filePath) ??
+			throw new ArgumentException($"Could not resolve directory name for '{filePath}'", filePath);
+
+		if (doc.DocumentElement == null)
+			return result;
 
 		foreach (var node in doc.DocumentElement.ChildNodes)
 		{
@@ -36,14 +40,14 @@ internal static class DatabaseChangeLogSource
 
 					if (sqlFiles.Count == 1)
 					{
-						AddSqlFile(rootDir, filePath, options, result, sqlFiles, id, author, ref runGroupOrder);
+						AddSqlFile(rootDir, filePath, options, result, (XmlElement)sqlFiles[0]!, id, author, ref runGroupOrder);
 						continue;
 					}
 
 					var sqlElements = element.GetElementsByTagName("sql");
 
 					if (sqlElements.Count == 1)
-						AddInlineSql(rootDir, filePath, result, sqlElements, id, author, ref runGroupOrder);
+						AddInlineSql(rootDir, filePath, result, sqlElements[0]!.InnerText, id, author, ref runGroupOrder);
 				}
 			}
 		}
@@ -64,21 +68,16 @@ internal static class DatabaseChangeLogSource
 		result.AddRange(GetScripts(file, rootDir, options, ref runGroupOrder));
 	}
 
-	private static void AddInlineSql(string rootDir, string filePath, List<SqlScript> result, XmlNodeList sqlElements, string changeSetId, string author, ref int runGroupOrder)
+	private static void AddInlineSql(string rootDir, string filePath, List<SqlScript> result, string script, string changeSetId, string author, ref int runGroupOrder)
 	{
-		var sql = (XmlElement)sqlElements[0];
-		var script = sql.InnerText;
-
 		var name = GenerateName(rootDir, filePath, changeSetId, author);
 		var sqlScriptOptions = new SqlScriptOptions { RunGroupOrder = runGroupOrder++ };
 
 		result.Add(new SqlScript(name, script, sqlScriptOptions));
 	}
 
-	private static void AddSqlFile(string rootDir, string changeSetFile, LiquibaseScriptOptions options, List<SqlScript> result, XmlNodeList sqlFiles, string changeSetId, string author, ref int runGroupOrder)
+	private static void AddSqlFile(string rootDir, string changeSetFile, LiquibaseScriptOptions options, List<SqlScript> result, XmlElement sqlFile, string changeSetId, string author, ref int runGroupOrder)
 	{
-		var sqlFile = (XmlElement)sqlFiles[0];
-
 		var path = sqlFile.GetAttribute("path");
 
 		if (string.IsNullOrEmpty(path))
@@ -103,7 +102,7 @@ internal static class DatabaseChangeLogSource
 		}
 	}
 
-	private static IEnumerable<SqlScript> SplitStatement(string rootDir, string path, string changeSetFile, string changeSetId, string author, Encoding encoding, LiquibaseScriptOptions options, Support.ScriptType scriptType, ref int runGroupOrder)
+	private static List<SqlScript> SplitStatement(string rootDir, string path, string changeSetFile, string changeSetId, string author, Encoding encoding, LiquibaseScriptOptions options, Support.ScriptType scriptType, ref int runGroupOrder)
 	{
 		var filePath = Path.Combine(rootDir, path);
 		using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);

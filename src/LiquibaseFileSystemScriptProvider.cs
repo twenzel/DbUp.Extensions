@@ -21,8 +21,8 @@ public class LiquibaseFileSystemScriptProvider : IScriptProvider
 	public LiquibaseFileSystemScriptProvider(string changelogFilePath, LiquibaseScriptOptions options, SqlScriptOptions sqlScriptOptions)
 	{
 		_changeLogFilePath = changelogFilePath;
-		_options = options ?? throw new ArgumentNullException("options");
-		_sqlScriptOptions = sqlScriptOptions ?? throw new ArgumentNullException("sqlScriptOptions");
+		_options = options ?? throw new ArgumentNullException(nameof(options));
+		_sqlScriptOptions = sqlScriptOptions ?? throw new ArgumentNullException(nameof(sqlScriptOptions));
 	}
 
 	/// <inheritdoc/>
@@ -31,7 +31,7 @@ public class LiquibaseFileSystemScriptProvider : IScriptProvider
 		if (!File.Exists(_changeLogFilePath))
 			throw new InvalidOperationException($"Changelog file '{_changeLogFilePath}' does not exist.");
 
-		var rootDir = Path.GetFullPath(Path.GetDirectoryName(_changeLogFilePath));
+		var rootDir = Path.GetFullPath(Path.GetDirectoryName(_changeLogFilePath) ?? throw new InvalidOperationException($"Could not resolve directory name for '{_changeLogFilePath}'"));
 		var runGroupOrder = _sqlScriptOptions.RunGroupOrder;
 		return DatabaseChangeLogSource.GetScripts(_changeLogFilePath, rootDir, _options, ref runGroupOrder);
 	}
