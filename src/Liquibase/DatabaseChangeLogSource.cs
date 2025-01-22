@@ -53,15 +53,13 @@ internal static class DatabaseChangeLogSource
 
 	private static void AddChangelog(string rootDir, LiquibaseScriptOptions options, List<SqlScript> result, string changelogFilePath, XmlElement element, ref int runGroupOrder)
 	{
-		var file = element.GetAttribute("file");
+		var file = FixDirectoryChar(element.GetAttribute("file"));
 		var relativeToChangelogFile = element.GetAttribute("relativeToChangelogFile");
 
 		if (relativeToChangelogFile == "true")
 			file = Path.Combine(changelogFilePath, file);
 		else
 			file = Path.Combine(rootDir, file);
-
-		file = Path.GetFullPath(file);
 
 		result.AddRange(GetScripts(file, rootDir, options, ref runGroupOrder));
 	}
@@ -86,6 +84,8 @@ internal static class DatabaseChangeLogSource
 		if (string.IsNullOrEmpty(path))
 			throw new InvalidOperationException($"Changeset {changeSetId} in {changeSetFile} does not have a valid \"path\" attribute!");
 
+		path = FixDirectoryChar(path);
+
 		var encodingName = sqlFile.GetAttribute("encoding");
 		var splitStatements = sqlFile.GetAttribute("splitStatements");
 		var runAlways = sqlFile.GetAttribute("runAlways");
@@ -99,13 +99,13 @@ internal static class DatabaseChangeLogSource
 		{
 			var sqlScriptOptions = new SqlScriptOptions { ScriptType = scriptType, RunGroupOrder = runGroupOrder++ };
 			var name = GenerateName(rootDir, changeSetFile, changeSetId, author);
-			result.Add(new SqlScript(name, File.ReadAllText(Path.GetFullPath(Path.Combine(rootDir, path)), encoding), sqlScriptOptions));
+			result.Add(new SqlScript(name, File.ReadAllText(Path.Combine(rootDir, path), encoding), sqlScriptOptions));
 		}
 	}
 
 	private static IEnumerable<SqlScript> SplitStatement(string rootDir, string path, string changeSetFile, string changeSetId, string author, Encoding encoding, LiquibaseScriptOptions options, Support.ScriptType scriptType, ref int runGroupOrder)
 	{
-		var filePath = Path.GetFullPath(Path.Combine(rootDir, path));
+		var filePath = Path.Combine(rootDir, path);
 		using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 		using var resourceStreamReader = new StreamReader(fileStream, encoding, true);
 
@@ -158,5 +158,10 @@ internal static class DatabaseChangeLogSource
 			.Substring(fullBasePath.Length)
 			.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
 			.Trim(Path.AltDirectorySeparatorChar) + $"-{identifier}-{author}";
+	}
+
+	private static string FixDirectoryChar(string path)
+	{
+		return path.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 	}
 }
