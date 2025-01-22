@@ -160,12 +160,15 @@ Task("Publish")
         }
 
         // Push the package and symbols
-        DotNetNuGetPush(packages, new DotNetNuGetPushSettings
+        foreach (var package in packages)
         {
-            Source = nugetPublishFeed,
-            ApiKey = nugetApiKey,
-            SkipDuplicate = true
-        });
+            DotNetNuGetPush(package, new DotNetNuGetPushSettings
+            {
+                Source = nugetPublishFeed,
+                ApiKey = nugetApiKey,
+                SkipDuplicate = true
+            });
+        }
     });
 
 Task("Default")
