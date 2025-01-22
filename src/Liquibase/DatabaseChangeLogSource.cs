@@ -156,12 +156,12 @@ internal static class DatabaseChangeLogSource
 
 		return fullPath
 			.Substring(fullBasePath.Length)
-			.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+			.Replace('\\', Path.AltDirectorySeparatorChar)
 			.Trim(Path.AltDirectorySeparatorChar) + $"-{identifier}-{author}";
 	}
 
 	private static string FixDirectoryChar(string path)
 	{
-		return path.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+		return path.Replace('\\', Path.DirectorySeparatorChar);
 	}
 }
