@@ -9,7 +9,7 @@ internal class InMemoryScriptExecutor : ScriptExecutor
 {
 	private readonly InMemoryStore _store;
 
-	public InMemoryScriptExecutor(InMemoryStore store, Func<IConnectionManager> connectionManagerFactory, Func<IUpgradeLog> log, string schema, Func<bool> variablesEnabled,
+	public InMemoryScriptExecutor(InMemoryStore store, Func<IConnectionManager> connectionManagerFactory, Func<IUpgradeLog> log, string? schema, Func<bool> variablesEnabled,
 			IEnumerable<IScriptPreprocessor> scriptPreprocessors, Func<IJournal> journalFactory)
 			: base(connectionManagerFactory, new SqlServerObjectParser(), log, schema, variablesEnabled, scriptPreprocessors, journalFactory)
 	{
