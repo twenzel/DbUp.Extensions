@@ -1,5 +1,4 @@
 #tool "dotnet:?package=GitVersion.Tool&version=6.1.0"
-#tool "nuget:?package=NuGet.CommandLine&version=6.12.2"
 #tool "nuget:?package=dotnet-sonarscanner&version=9.0.2"
 
 #addin "nuget:?package=Cake.Sonar&version=1.1.33"
@@ -161,12 +160,15 @@ Task("Publish")
         }
 
         // Push the package and symbols
-        NuGetPush(packages, new NuGetPushSettings
+        foreach (var package in packages)
         {
-            Source = nugetPublishFeed,
-            ApiKey = nugetApiKey,
-            SkipDuplicate = true
-        });
+            DotNetNuGetPush(package, new DotNetNuGetPushSettings
+            {
+                Source = nugetPublishFeed,
+                ApiKey = nugetApiKey,
+                SkipDuplicate = true
+            });
+        }
     });
 
 Task("Default")
