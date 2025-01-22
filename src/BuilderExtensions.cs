@@ -78,7 +78,7 @@ public static class BuilderExtensions
 					return s.SqlScriptOptions.ScriptType == ScriptType.RunAlways;
 
 				// script content was changed -> not supported
-				_log().WriteError("Script content of {0} was changed. Original hash: {1}. New {2}", s.Name, executedScript.ContentHash, hashedScript.ContentHash);
+				_log().LogError("Script content of {0} was changed. Original hash: {1}. New {2}", s.Name, executedScript.ContentHash, hashedScript.ContentHash);
 				throw new InvalidOperationException($"Script content of {s.Name} was changed.");
 			});
 		}
