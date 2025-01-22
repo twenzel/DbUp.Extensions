@@ -31,7 +31,7 @@ public class LiquibaseFileSystemScriptProvider : IScriptProvider
 		if (!File.Exists(_changeLogFilePath))
 			throw new InvalidOperationException($"Changelog file '{_changeLogFilePath}' does not exist.");
 
-		var rootDir = Path.GetDirectoryName(_changeLogFilePath);
+		var rootDir = Path.GetFullPath(Path.GetDirectoryName(_changeLogFilePath));
 		var runGroupOrder = _sqlScriptOptions.RunGroupOrder;
 		return DatabaseChangeLogSource.GetScripts(_changeLogFilePath, rootDir, _options, ref runGroupOrder);
 	}
